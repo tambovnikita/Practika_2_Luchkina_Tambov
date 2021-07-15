@@ -141,12 +141,76 @@ class MyWindow(QMainWindow):
         """
 
     def mainBtnClick(self):
-        print('mainBtnClick')
+
+        if self.lineEdit1.text() != '' and self.lineEdit2.text() != '':
+
+            self.kol_str = int(self.lineEdit1.text())
+            self.kol_stol = int(self.lineEdit2.text())
+
+            self.frame.setGeometry(QtCore.QRect(120, 200, 600, 50))  # Меняем размер и положение.
+            self.frame.setStyleSheet("background-color: rgb(150,150,150)")
+
+            self.gridLayout = QGridLayout()  # Размещение виджетов по сетке.
+
+            for i_1 in range(self.kol_str):
+                for j_1 in range(self.kol_stol):  # Вставляем QLineEdit (коэфф. в ограничениях).
+                    self.gridLayout.addWidget(QLineEdit(), i_1, j_1)
+
+                self.comboBox = QComboBox()
+                self.comboBox.setFixedHeight(30)
+                self.comboBox.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
+                self.comboBox.addItem("<=")
+                self.comboBox.addItem("=")
+                self.comboBox.addItem(">=")
+                self.gridLayout.addWidget(self.comboBox, i_1, self.kol_stol)  # Вставляем QComboBox ("<=", "=", ">=").
+
+                self.gridLayout.addWidget(QLineEdit(), i_1, self.kol_stol + 1)  # Вставляем QLineEdit (свободные члены).
+
+            self.label_zero = QLabel()
+            self.label_zero.setFixedHeight(30)
+            self.gridLayout.addWidget(self.label_zero, self.kol_str, 0)  # Вставляем пустую строку.
+
+            for i_1 in range(self.kol_stol):  # Вставляем QLineEdit (коэфф. крит. функции).
+                self.gridLayout.addWidget(QLineEdit(), self.kol_str + 1, i_1)
+
+            self.label_strel = QLabel()
+            self.label_strel.setText('  🠖')
+            self.label_strel.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
+            self.gridLayout.addWidget(self.label_strel, self.kol_str + 1, self.kol_stol)  # Вставляем '🠖'.
+
+            self.comboBox_max_or_min = QComboBox()
+            self.comboBox_max_or_min.setFixedHeight(30)
+            self.comboBox_max_or_min.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
+            self.comboBox_max_or_min.addItem("MAX")
+            self.comboBox_max_or_min.addItem("MIN")
+            # Вставляем QComboBox ("max", "min").
+            self.gridLayout.addWidget(self.comboBox_max_or_min, self.kol_str + 1, self.kol_stol + 1)
+
+
+            self.frame.setLayout(self.gridLayout)
+
+            self.MainButton.setText("Решение")  # Меняем текст
+            self.MainButton.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
+            self.MainButton.setGeometry(QtCore.QRect(120, 200, 150, 35))  # Изменяем размер и положение
+
+            # подключение клик-сигнала к слоту data_sim
+            self.MainButton.clicked.connect(self.data_sim)
+
+            self.frame = QFrame(self)
+            self.frame.setGeometry(QtCore.QRect(0, 0, 0, 0))  # Меняем размер и положение.
+
+            self.TextEdit = QtWidgets.QTextEdit(self)
+            self.TextEdit.setGeometry(QtCore.QRect(0, 0, 0, 0))  # Меняем размер и положение.
+
+            # Создаём ещё одну кнопку.
+            self.MainButton = QtWidgets.QPushButton(self)
+            self.MainButton.setGeometry(QtCore.QRect(0, 0, 0, 0))  # Меняем размер и положение.
+
+
 
     def infoBtnClick(self):
         formInfo = FormInfo(self)
         formInfo.exec_()
-
 
 
 class FormInfo(QtWidgets.QDialog):
