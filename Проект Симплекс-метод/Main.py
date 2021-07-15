@@ -1,13 +1,15 @@
 import time
 
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QTextEdit, QComboBox, QFrame, QGridLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QTextEdit, QComboBox, QFrame,\
+    QGridLayout
+from fractions import Fraction  # для работы с дробями
 import sys
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
-        self.setGeometry(50, 50, 1030, 900)
+        self.setGeometry(50, 50, 1030, 350)
         self.setWindowTitle('Симплекс-метод')
 
         # градиентный фон
@@ -20,36 +22,36 @@ class MyWindow(QMainWindow):
 
         self.mainLbl = QLabel(self)     # Заголовок
         self.mainLbl.setFont(QtGui.QFont('Segoe print', 26))  # Изменяем шрифт
-        self.mainLbl.setGeometry(QtCore.QRect(210, 70, 800, 50))  # Меняем размер и положение
+        self.mainLbl.setGeometry(QtCore.QRect(190, 80, 800, 50))  # Меняем размер и положение
         self.mainLbl.setText("С и м п л е к с  -  м е т о д")  # Меняем текст
         self.mainLbl.setStyleSheet("color: #C71585")  # меняем цвет текста
 
         self.mainLbl1 = QLabel(self)
         self.mainLbl1.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
-        self.mainLbl1.setGeometry(QtCore.QRect(50, 140, 530, 50))  # Меняем размер и положение
+        self.mainLbl1.setGeometry(QtCore.QRect(50, 150, 530, 50))  # Меняем размер и положение
         self.mainLbl1.setText("количество ограничений")  # Меняем текст
         self.mainLbl1.setStyleSheet("color: #C71585")  # меняем цвет текста
 
         self.lineEdit1 = QLineEdit(self)
         self.lineEdit1.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
-        self.lineEdit1.setGeometry(QtCore.QRect(430, 150, 50, 35))  # Меняем размер и положение.
+        self.lineEdit1.setGeometry(QtCore.QRect(430, 160, 50, 35))  # Меняем размер и положение.
         self.lineEdit1.setStyleSheet("color: #7f4355")  # меняем цвет текста
 
         self.mainLbl2 = QLabel(self)
         self.mainLbl2.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
-        self.mainLbl2.setGeometry(QtCore.QRect(550, 140, 530, 50))  # Меняем размер и положение
+        self.mainLbl2.setGeometry(QtCore.QRect(550, 150, 530, 50))  # Меняем размер и положение
         self.mainLbl2.setText("количество переменных")  # Меняем текст
         self.mainLbl2.setStyleSheet("color: #C71585")  # меняем цвет текста
 
         self.lineEdit2 = QLineEdit(self)
         self.lineEdit2.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
-        self.lineEdit2.setGeometry(QtCore.QRect(925, 150, 50, 35))  # Меняем размер и положение.
+        self.lineEdit2.setGeometry(QtCore.QRect(925, 160, 50, 35))  # Меняем размер и положение.
         self.lineEdit2.setStyleSheet("color: #7f4355")  # меняем цвет текста
 
         self.mainBtn = QPushButton(self)
         self.mainBtn.setText("Продолжить")  # Меняем текст
         self.mainBtn.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
-        self.mainBtn.setGeometry(QtCore.QRect(350, 220, 300, 50))  # Меняем размер и положение.
+        self.mainBtn.setGeometry(QtCore.QRect(270, 230, 500, 50))  # Меняем размер и положение.
         self.mainBtn.setStyleSheet("""
                 QPushButton {
                     background-color: #f8ebf4;
@@ -90,71 +92,88 @@ class MyWindow(QMainWindow):
                     border-radius: 20px
                 }
         """)  # меняем цвет фона
-        self.infoBtn.clicked.connect(self.infoBtnClick)
 
-        self.frame = QFrame(self)
-        self.frame.hide()
-        self.TextEdit = QtWidgets.QTextEdit(self)
-        self.TextEdit.hide()
-        self.MainButton = QtWidgets.QPushButton(self)
-        self.MainButton.hide()
+        self.infoBtn.clicked.connect(self.infoBtnClick)     # подключаем кнопку "Справка" к слоту
+
+        self.frame = QFrame(self)   # создаём псевдо-область, которая при нажатии будет удаляться и создаваться новая
+        self.frame.hide()   # скроем псевдо-область
+        self.MainButton = QPushButton(self)     # создаём кнопку "Решить" заранее
+        self.MainButton.hide()      # скроем пока кнопку "Решить"
+
+
+    def infoBtnClick(self):     # вызывает диалоговое окно "Справка"
+        formInfo = FormInfo(self)
+        formInfo.exec_()
+
 
     def mainBtnClick(self):
 
         if self.lineEdit1.text() != '' and self.lineEdit2.text() != '':
-
-            self.frame.show()
-            self.TextEdit.show()
-            self.MainButton.show()
+            self.frame.deleteLater()
+            self.frame = QFrame(self)
+            self.setGeometry(50, 50, 1030, 910)     # делаем главное окно больше по высоте
+            self.frame.show()   # показываем скрытую область
+            self.MainButton.show()  # показываем скрытую кнопку "Решить"
 
             self.kol_str = int(self.lineEdit1.text())
             self.kol_stol = int(self.lineEdit2.text())
 
-            self.frame.setGeometry(QtCore.QRect(40, 300, 950, 500))  # Меняем размер и положение.
-            self.frame.setStyleSheet("background-color: rgba(230,230,230,0.5)")
+            self.frame.setGeometry(QtCore.QRect(65, 330, 900, 450))  # Меняем размер и положение.
+            self.frame.setStyleSheet("background-color: rgba(230,230,230,0.4); border-radius: 20px")
             self.gridLayout = QGridLayout()  # Размещение виджетов по сетке.
 
             for i_1 in range(self.kol_str):
                 for j_1 in range(self.kol_stol):  # Вставляем QLineEdit (коэфф. в ограничениях).
-                    self.gridLayout.addWidget(QLineEdit(), i_1, j_1)
+                    le = QLineEdit()
+                    le.setFixedHeight(35)
+                    le.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт
+                    self.gridLayout.addWidget(le, i_1, j_1)
 
                 self.comboBox = QComboBox()
                 self.comboBox.setFixedHeight(30)
+                self.comboBox.setFixedWidth(50)
+                self.comboBox.setStyleSheet("border-radius: 10px")
                 self.comboBox.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
-                self.comboBox.addItem("<=")
+                self.comboBox.addItem("⩽")
                 self.comboBox.addItem("=")
-                self.comboBox.addItem(">=")
+                self.comboBox.addItem("⩾")
                 self.gridLayout.addWidget(self.comboBox, i_1, self.kol_stol)  # Вставляем QComboBox ("<=", "=", ">=").
 
-                self.gridLayout.addWidget(QLineEdit(), i_1, self.kol_stol + 1)  # Вставляем QLineEdit (свободные члены).
+                le = QLineEdit()
+                le.setFixedHeight(35)
+                le.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт
+                self.gridLayout.addWidget(le, i_1, self.kol_stol + 1)  # Вставляем QLineEdit (свободные члены).
 
-            self.label_zero = QLabel()
-            self.label_zero.setStyleSheet("background-color: rgba(230,230,230,0.5)")
-            self.label_zero.setFixedHeight(30)
-            self.gridLayout.addWidget(self.label_zero, self.kol_str, 0)  # Вставляем пустую строку.
 
             for i_1 in range(self.kol_stol):  # Вставляем QLineEdit (коэфф. крит. функции).
-                self.gridLayout.addWidget(QLineEdit(), self.kol_str + 1, i_1)
+                le = QLineEdit()
+                le.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт
+                le.setStyleSheet("margin-top: 30px")
+                self.gridLayout.addWidget(le, self.kol_str, i_1)
 
             self.label_strel = QLabel()
-            self.label_strel.setText('  🠖')
-            self.label_strel.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
-            self.gridLayout.addWidget(self.label_strel, self.kol_str + 1, self.kol_stol)  # Вставляем '🠖'.
+            self.label_strel.setText(' 🠖')
+            self.label_strel.setFixedHeight(60)
+            self.label_strel.setStyleSheet("border-radius: 10px; margin-top: 30px")
+            self.label_strel.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
+            self.gridLayout.addWidget(self.label_strel, self.kol_str, self.kol_stol)  # Вставляем '🠖'.
 
             self.comboBox_max_or_min = QComboBox()
-            self.comboBox_max_or_min.setFixedHeight(30)
-            self.comboBox_max_or_min.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
-            self.comboBox_max_or_min.addItem("MAX")
-            self.comboBox_max_or_min.addItem("MIN")
+            self.comboBox_max_or_min.setFixedHeight(70)
+            self.comboBox_max_or_min.setFixedWidth(80)
+            self.comboBox_max_or_min.setFont(QtGui.QFont('Century Gothic', 12))  # Изменяем шрифт.
+            self.comboBox_max_or_min.addItem("  MAX")
+            self.comboBox_max_or_min.addItem("  MIN")
+            self.comboBox_max_or_min.setStyleSheet("border-radius: 10px; margin-top: 30px")
             # Вставляем QComboBox ("max", "min").
-            self.gridLayout.addWidget(self.comboBox_max_or_min, self.kol_str + 1, self.kol_stol + 1)
+            self.gridLayout.addWidget(self.comboBox_max_or_min, self.kol_str, self.kol_stol + 1)
 
 
             self.frame.setLayout(self.gridLayout)
 
             self.MainButton.setText("Решение")  # Меняем текст
             self.MainButton.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
-            self.MainButton.setGeometry(QtCore.QRect(350, 825, 300, 50))  # Изменяем размер и положение
+            self.MainButton.setGeometry(QtCore.QRect(185, 825, 670, 50))  # Изменяем размер и положение
             self.MainButton.setStyleSheet("""
                             QPushButton {
                                 background-color: #f8ebf4;
@@ -172,12 +191,67 @@ class MyWindow(QMainWindow):
                                 border-radius: 20px
                             }
                     """)  # меняем цвет фона
-            self.MainButton.clicked.connect(self.mainBtnClick)
+
+            self.MainButton.clicked.connect(self.SimplexData)
 
 
-    def infoBtnClick(self):
-        formInfo = FormInfo(self)
-        formInfo.exec_()
+    # После нажатия на кнопку, введённые данные будут обрабатываться
+    def SimplexData(self):
+
+        mat = []
+        W = []
+
+        # Первый этап сохранения данных (сохраняем левую часть ограничений и критериальной функции)
+        for i_1 in range(self.kol_str):
+            mat.append([])
+            for j_1 in range(self.kol_stol):
+                if self.gridLayout.itemAtPosition(i_1, j_1).widget().text() == '':
+                    mat[i_1].append(0)
+                else:
+                    mat[i_1].append(float(self.gridLayout.itemAtPosition(i_1, j_1).widget().text()))
+
+        for i_1 in range(self.kol_stol):
+            if (self.gridLayout.itemAtPosition(self.kol_str + 1, i_1)).widget().text() == '':
+                W.append(0)
+            else:
+                W.append(float((self.gridLayout.itemAtPosition(self.kol_str + 1, i_1)).widget().text()))
+
+        # Второй этап сохранения данных (приводим систему к каноническому виду)
+        for i_1 in range(self.kol_str):
+            if self.gridLayout.itemAtPosition(i_1, self.kol_stol).widget().currentText() == '<=':
+                for j_1 in range(self.kol_str):
+                    if j_1 == i_1:
+                        mat[j_1].append(1)
+                    else:
+                        mat[j_1].append(0)
+
+        for i_1 in range(self.kol_str):
+            if self.gridLayout.itemAtPosition(i_1, self.kol_stol).widget().currentText() == '>=':
+                for j_1 in range(self.kol_str):
+                    if j_1 == i_1:
+                        mat[j_1].append(-1)
+                    else:
+                        mat[j_1].append(0)
+
+        self.len_W = int(len(W))
+
+        for i_1 in range(len(mat[0]) - self.len_W):
+            W.append(0)
+
+        # Третий этап сохранения (добавляем свободные члены)
+        for i_1 in range(self.kol_str):
+            mat[i_1].append(float(self.gridLayout.itemAtPosition(i_1, self.kol_stol + 1).widget().text()))
+
+        # Четвёртый этап сохранения (представляем все данные с помощью Fraction)
+        for i_1 in range(len(mat)):
+            for j_1 in range(len(mat[0])):
+                mat[i_1][j_1] = Fraction(str(mat[i_1][j_1]))
+        for i_1 in range(len(W)):
+            W[i_1] = Fraction(str(W[i_1]))
+
+        """ ГОТОВО """
+        print(mat)
+        print(W)
 
 
 class FormInfo(QtWidgets.QDialog):
@@ -185,8 +259,16 @@ class FormInfo(QtWidgets.QDialog):
         super(FormInfo, self).__init__(parent)
         self.setGeometry(1100, 80, 600, 900)
         self.setWindowTitle('Справка по Симплекс-методу')
+        # градиентный фон
+        p = QtGui.QPalette()
+        gradient = QtGui.QLinearGradient(0, 0, 0, 400)
+        gradient.setColorAt(0.0, QtGui.QColor(240, 240, 240))
+        gradient.setColorAt(1.0, QtGui.QColor(240, 160, 160))
+        p.setBrush(QtGui.QPalette.Window, QtGui.QBrush(gradient))
+        self.setPalette(p)
 
         self.textEdit = QTextEdit(self)
+        self.textEdit.setReadOnly(True)  # Только чтение.
         self.textEdit.setGeometry(QtCore.QRect(10, 10, 580, 880))  # Меняем размер и положение.
         self.textEdit.setFont(QtGui.QFont('Arial'))  # Изменяем шрифт.
         self.textEdit.setHtml(
