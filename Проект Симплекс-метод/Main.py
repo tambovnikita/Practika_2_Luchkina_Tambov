@@ -19,37 +19,37 @@ class MyWindow(QMainWindow):
         self.setPalette(p)
 
         self.mainLbl = QLabel(self)     # Заголовок
-        self.mainLbl.setFont(QtGui.QFont('Century Gothic', 24))  # Изменяем шрифт
-        self.mainLbl.setGeometry(QtCore.QRect(250, 70, 600, 50))  # Меняем размер и положение
+        self.mainLbl.setFont(QtGui.QFont('Segoe print', 26))  # Изменяем шрифт
+        self.mainLbl.setGeometry(QtCore.QRect(210, 70, 800, 50))  # Меняем размер и положение
         self.mainLbl.setText("С и м п л е к с  -  м е т о д")  # Меняем текст
         self.mainLbl.setStyleSheet("color: #C71585")  # меняем цвет текста
 
         self.mainLbl1 = QLabel(self)
         self.mainLbl1.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
-        self.mainLbl1.setGeometry(QtCore.QRect(50, 130, 530, 50))  # Меняем размер и положение
+        self.mainLbl1.setGeometry(QtCore.QRect(50, 140, 530, 50))  # Меняем размер и положение
         self.mainLbl1.setText("количество ограничений")  # Меняем текст
         self.mainLbl1.setStyleSheet("color: #C71585")  # меняем цвет текста
 
         self.lineEdit1 = QLineEdit(self)
         self.lineEdit1.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
-        self.lineEdit1.setGeometry(QtCore.QRect(430, 140, 50, 35))  # Меняем размер и положение.
+        self.lineEdit1.setGeometry(QtCore.QRect(430, 150, 50, 35))  # Меняем размер и положение.
         self.lineEdit1.setStyleSheet("color: #7f4355")  # меняем цвет текста
 
         self.mainLbl2 = QLabel(self)
         self.mainLbl2.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
-        self.mainLbl2.setGeometry(QtCore.QRect(550, 130, 530, 50))  # Меняем размер и положение
+        self.mainLbl2.setGeometry(QtCore.QRect(550, 140, 530, 50))  # Меняем размер и положение
         self.mainLbl2.setText("количество переменных")  # Меняем текст
         self.mainLbl2.setStyleSheet("color: #C71585")  # меняем цвет текста
 
         self.lineEdit2 = QLineEdit(self)
         self.lineEdit2.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
-        self.lineEdit2.setGeometry(QtCore.QRect(925, 140, 50, 35))  # Меняем размер и положение.
+        self.lineEdit2.setGeometry(QtCore.QRect(925, 150, 50, 35))  # Меняем размер и положение.
         self.lineEdit2.setStyleSheet("color: #7f4355")  # меняем цвет текста
 
         self.mainBtn = QPushButton(self)
         self.mainBtn.setText("Продолжить")  # Меняем текст
         self.mainBtn.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
-        self.mainBtn.setGeometry(QtCore.QRect(350, 200, 300, 50))  # Меняем размер и положение.
+        self.mainBtn.setGeometry(QtCore.QRect(350, 220, 300, 50))  # Меняем размер и положение.
         self.mainBtn.setStyleSheet("""
                 QPushButton {
                     background-color: #f8ebf4;
@@ -141,12 +141,19 @@ class MyWindow(QMainWindow):
         """
 
         self.frame = QFrame(self)
+        self.frame.hide()
         self.TextEdit = QtWidgets.QTextEdit(self)
+        self.TextEdit.hide()
         self.MainButton = QtWidgets.QPushButton(self)
+        self.MainButton.hide()
 
     def mainBtnClick(self):
 
         if self.lineEdit1.text() != '' and self.lineEdit2.text() != '':
+
+            self.frame.show()
+            self.TextEdit.show()
+            self.MainButton.show()
 
             self.kol_str = int(self.lineEdit1.text())
             self.kol_stol = int(self.lineEdit2.text())
@@ -170,6 +177,7 @@ class MyWindow(QMainWindow):
                 self.gridLayout.addWidget(QLineEdit(), i_1, self.kol_stol + 1)  # Вставляем QLineEdit (свободные члены).
 
             self.label_zero = QLabel()
+            self.label_zero.setStyleSheet("background-color: rgba(230,230,230,0.5)")
             self.label_zero.setFixedHeight(30)
             self.gridLayout.addWidget(self.label_zero, self.kol_str, 0)  # Вставляем пустую строку.
 
