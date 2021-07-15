@@ -1,7 +1,7 @@
 import time
 
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QTextEdit
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QTextEdit, QComboBox, QFrame, QGridLayout
 import sys
 
 class MyWindow(QMainWindow):
@@ -20,36 +20,36 @@ class MyWindow(QMainWindow):
 
         self.mainLbl = QLabel(self)     # Заголовок
         self.mainLbl.setFont(QtGui.QFont('Century Gothic', 24))  # Изменяем шрифт
-        self.mainLbl.setGeometry(QtCore.QRect(120, 10, 600, 50))  # Меняем размер и положение
+        self.mainLbl.setGeometry(QtCore.QRect(250, 70, 600, 50))  # Меняем размер и положение
         self.mainLbl.setText("С и м п л е к с  -  м е т о д")  # Меняем текст
         self.mainLbl.setStyleSheet("color: #C71585")  # меняем цвет текста
 
         self.mainLbl1 = QLabel(self)
         self.mainLbl1.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
-        self.mainLbl1.setGeometry(QtCore.QRect(50, 90, 530, 50))  # Меняем размер и положение
+        self.mainLbl1.setGeometry(QtCore.QRect(50, 130, 530, 50))  # Меняем размер и положение
         self.mainLbl1.setText("количество ограничений")  # Меняем текст
         self.mainLbl1.setStyleSheet("color: #C71585")  # меняем цвет текста
 
         self.lineEdit1 = QLineEdit(self)
         self.lineEdit1.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
-        self.lineEdit1.setGeometry(QtCore.QRect(430, 100, 50, 35))  # Меняем размер и положение.
+        self.lineEdit1.setGeometry(QtCore.QRect(430, 140, 50, 35))  # Меняем размер и положение.
         self.lineEdit1.setStyleSheet("color: #7f4355")  # меняем цвет текста
 
         self.mainLbl2 = QLabel(self)
         self.mainLbl2.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
-        self.mainLbl2.setGeometry(QtCore.QRect(550, 90, 530, 50))  # Меняем размер и положение
+        self.mainLbl2.setGeometry(QtCore.QRect(550, 130, 530, 50))  # Меняем размер и положение
         self.mainLbl2.setText("количество переменных")  # Меняем текст
         self.mainLbl2.setStyleSheet("color: #C71585")  # меняем цвет текста
 
         self.lineEdit2 = QLineEdit(self)
         self.lineEdit2.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
-        self.lineEdit2.setGeometry(QtCore.QRect(925, 100, 50, 35))  # Меняем размер и положение.
+        self.lineEdit2.setGeometry(QtCore.QRect(925, 140, 50, 35))  # Меняем размер и положение.
         self.lineEdit2.setStyleSheet("color: #7f4355")  # меняем цвет текста
 
         self.mainBtn = QPushButton(self)
         self.mainBtn.setText("Продолжить")  # Меняем текст
         self.mainBtn.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
-        self.mainBtn.setGeometry(QtCore.QRect(100, 170, 820, 50))  # Меняем размер и положение.
+        self.mainBtn.setGeometry(QtCore.QRect(350, 200, 300, 50))  # Меняем размер и положение.
         self.mainBtn.setStyleSheet("""
                 QPushButton {
                     background-color: #f8ebf4;
@@ -72,7 +72,7 @@ class MyWindow(QMainWindow):
         self.infoBtn = QPushButton(self)
         self.infoBtn.setText("Справка")  # Меняем текст
         self.infoBtn.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
-        self.infoBtn.setGeometry(QtCore.QRect(700, 20, 200, 50))  # Меняем размер и положение.
+        self.infoBtn.setGeometry(QtCore.QRect(800, 20, 200, 40))  # Меняем размер и положение.
         self.infoBtn.setStyleSheet("""
                 QPushButton {
                     background-color: white;
@@ -140,6 +140,10 @@ class MyWindow(QMainWindow):
         Проводим итерационные вычисления до получения оптимального решения
         """
 
+        self.frame = QFrame(self)
+        self.TextEdit = QtWidgets.QTextEdit(self)
+        self.MainButton = QtWidgets.QPushButton(self)
+
     def mainBtnClick(self):
 
         if self.lineEdit1.text() != '' and self.lineEdit2.text() != '':
@@ -147,9 +151,8 @@ class MyWindow(QMainWindow):
             self.kol_str = int(self.lineEdit1.text())
             self.kol_stol = int(self.lineEdit2.text())
 
-            self.frame.setGeometry(QtCore.QRect(120, 200, 600, 50))  # Меняем размер и положение.
-            self.frame.setStyleSheet("background-color: rgb(150,150,150)")
-
+            self.frame.setGeometry(QtCore.QRect(40, 300, 950, 500))  # Меняем размер и положение.
+            self.frame.setStyleSheet("background-color: rgba(230,230,230,0.5)")
             self.gridLayout = QGridLayout()  # Размещение виджетов по сетке.
 
             for i_1 in range(self.kol_str):
@@ -190,21 +193,28 @@ class MyWindow(QMainWindow):
             self.frame.setLayout(self.gridLayout)
 
             self.MainButton.setText("Решение")  # Меняем текст
-            self.MainButton.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
-            self.MainButton.setGeometry(QtCore.QRect(120, 200, 150, 35))  # Изменяем размер и положение
+            self.MainButton.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
+            self.MainButton.setGeometry(QtCore.QRect(350, 825, 300, 50))  # Изменяем размер и положение
+            self.MainButton.setStyleSheet("""
+                            QPushButton {
+                                background-color: #f8ebf4;
+                                color: #7f4355;
+                                border-radius: 20px
+                            }
+                            QPushButton:hover {
+                                background-color: #7f4355;
+                                color: #f8ebf4;
+                                border-radius: 20px
+                            }
+                            QPushButton:pressed {
+                                background-color: #31102b;
+                                color: #f8ebf4;
+                                border-radius: 20px
+                            }
+                    """)  # меняем цвет фона
+            self.MainButton.clicked.connect(self.mainBtnClick)
 
-            # подключение клик-сигнала к слоту data_sim
-            self.MainButton.clicked.connect(self.data_sim)
 
-            self.frame = QFrame(self)
-            self.frame.setGeometry(QtCore.QRect(0, 0, 0, 0))  # Меняем размер и положение.
-
-            self.TextEdit = QtWidgets.QTextEdit(self)
-            self.TextEdit.setGeometry(QtCore.QRect(0, 0, 0, 0))  # Меняем размер и положение.
-
-            # Создаём ещё одну кнопку.
-            self.MainButton = QtWidgets.QPushButton(self)
-            self.MainButton.setGeometry(QtCore.QRect(0, 0, 0, 0))  # Меняем размер и положение.
 
 
 
