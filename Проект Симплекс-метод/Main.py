@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushB
     QGridLayout
 import sys
 
-from SimplexData import SimplexData
+from simplexdata import SimplexData
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -204,11 +204,10 @@ class MyWindow(QMainWindow):
 
             self.MainButton.clicked.connect(self.toSimplexData)
 
+    # Функция, вызывающая обработчик-сборщик введённых данных
     def toSimplexData(self):
-        SimplexOgr, SimplexW, max_or_min = SimplexData(self.kol_str, self.kol_stol, self.gridLayout)
-        print(SimplexOgr)
-        print(SimplexW)
-        print(max_or_min)
+        OTVET = SimplexData(self.kol_str, self.kol_stol, self.gridLayout)
+        print(OTVET)
 
 
 class FormInfo(QtWidgets.QDialog):

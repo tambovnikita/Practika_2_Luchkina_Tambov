@@ -1,6 +1,8 @@
 
 from fractions import Fraction
 
+from simplexmethod import SimplexMethod
+
 # После нажатия на кнопку "Решить", введённые данные будут обрабатываться
 def SimplexData(kol_str, kol_stol, gridLayout):
 
@@ -75,4 +77,4 @@ def SimplexData(kol_str, kol_stol, gridLayout):
     max_or_min = gridLayout.itemAtPosition(kol_str, kol_stol + 1).widget().currentText()
 
     """ Все данные для дальнийших математических преобразований готовы! """
-    return SimplexOgr, SimplexW, max_or_min
+    return SimplexMethod(SimplexOgr, SimplexW, max_or_min)
