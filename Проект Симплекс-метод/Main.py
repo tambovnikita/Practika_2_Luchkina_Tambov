@@ -1,10 +1,10 @@
-import time
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QTextEdit, QComboBox, QFrame,\
     QGridLayout
-from fractions import Fraction  # для работы с дробями
 import sys
+
+from SimplexData import SimplexData
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -19,6 +19,11 @@ class MyWindow(QMainWindow):
         gradient.setColorAt(1.0, QtGui.QColor(240, 160, 160))
         p.setBrush(QtGui.QPalette.Window, QtGui.QBrush(gradient))
         self.setPalette(p)
+
+        # Для ввода только int-чисел и float-чисел
+        self.validatorInt = QtGui.QIntValidator(self)
+        self.validatorFloat = QtGui.QDoubleValidator(self)
+
 
         self.mainLbl = QLabel(self)     # Заголовок
         self.mainLbl.setFont(QtGui.QFont('Segoe print', 26))  # Изменяем шрифт
@@ -36,6 +41,7 @@ class MyWindow(QMainWindow):
         self.lineEdit1.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
         self.lineEdit1.setGeometry(QtCore.QRect(430, 160, 50, 35))  # Меняем размер и положение.
         self.lineEdit1.setStyleSheet("color: #7f4355")  # меняем цвет текста
+        self.lineEdit1.setValidator(self.validatorInt)  # разрешается ввод только целых чисел
 
         self.mainLbl2 = QLabel(self)
         self.mainLbl2.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
@@ -47,6 +53,7 @@ class MyWindow(QMainWindow):
         self.lineEdit2.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
         self.lineEdit2.setGeometry(QtCore.QRect(925, 160, 50, 35))  # Меняем размер и положение.
         self.lineEdit2.setStyleSheet("color: #7f4355")  # меняем цвет текста
+        self.lineEdit2.setValidator(self.validatorInt)  # разрешается ввод только целых чисел
 
         self.mainBtn = QPushButton(self)
         self.mainBtn.setText("Продолжить")  # Меняем текст
@@ -127,6 +134,7 @@ class MyWindow(QMainWindow):
                     le = QLineEdit()
                     le.setFixedHeight(35)
                     le.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт
+                    le.setValidator(self.validatorFloat)  # разрешается ввод только чисел
                     self.gridLayout.addWidget(le, i_1, j_1)
 
                 self.comboBox = QComboBox()
@@ -142,6 +150,7 @@ class MyWindow(QMainWindow):
                 le = QLineEdit()
                 le.setFixedHeight(35)
                 le.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт
+                le.setValidator(self.validatorFloat)  # разрешается ввод только чисел
                 self.gridLayout.addWidget(le, i_1, self.kol_stol + 1)  # Вставляем QLineEdit (свободные члены).
 
 
@@ -149,6 +158,7 @@ class MyWindow(QMainWindow):
                 le = QLineEdit()
                 le.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт
                 le.setStyleSheet("margin-top: 30px")
+                le.setValidator(self.validatorFloat)  # разрешается ввод только чисел
                 self.gridLayout.addWidget(le, self.kol_str, i_1)
 
             self.label_strel = QLabel()
@@ -162,9 +172,9 @@ class MyWindow(QMainWindow):
             self.comboBox_max_or_min.setFixedHeight(70)
             self.comboBox_max_or_min.setFixedWidth(80)
             self.comboBox_max_or_min.setFont(QtGui.QFont('Century Gothic', 12))  # Изменяем шрифт.
-            self.comboBox_max_or_min.addItem("  MAX")
-            self.comboBox_max_or_min.addItem("  MIN")
-            self.comboBox_max_or_min.setStyleSheet("border-radius: 10px; margin-top: 30px")
+            self.comboBox_max_or_min.addItem("MAX")
+            self.comboBox_max_or_min.addItem("MIN")
+            self.comboBox_max_or_min.setStyleSheet("border-radius: 10px; margin-top: 30px; padding-left: 15px")
             # Вставляем QComboBox ("max", "min").
             self.gridLayout.addWidget(self.comboBox_max_or_min, self.kol_str, self.kol_stol + 1)
 
@@ -192,66 +202,13 @@ class MyWindow(QMainWindow):
                             }
                     """)  # меняем цвет фона
 
-            self.MainButton.clicked.connect(self.SimplexData)
+            self.MainButton.clicked.connect(self.toSimplexData)
 
-
-    # После нажатия на кнопку, введённые данные будут обрабатываться
-    def SimplexData(self):
-
-        mat = []
-        W = []
-
-        # Первый этап сохранения данных (сохраняем левую часть ограничений и критериальной функции)
-        for i_1 in range(self.kol_str):
-            mat.append([])
-            for j_1 in range(self.kol_stol):
-                if self.gridLayout.itemAtPosition(i_1, j_1).widget().text() == '':
-                    mat[i_1].append(0)
-                else:
-                    mat[i_1].append(float(self.gridLayout.itemAtPosition(i_1, j_1).widget().text()))
-
-        for i_1 in range(self.kol_stol):
-            if (self.gridLayout.itemAtPosition(self.kol_str + 1, i_1)).widget().text() == '':
-                W.append(0)
-            else:
-                W.append(float((self.gridLayout.itemAtPosition(self.kol_str + 1, i_1)).widget().text()))
-
-        # Второй этап сохранения данных (приводим систему к каноническому виду)
-        for i_1 in range(self.kol_str):
-            if self.gridLayout.itemAtPosition(i_1, self.kol_stol).widget().currentText() == '<=':
-                for j_1 in range(self.kol_str):
-                    if j_1 == i_1:
-                        mat[j_1].append(1)
-                    else:
-                        mat[j_1].append(0)
-
-        for i_1 in range(self.kol_str):
-            if self.gridLayout.itemAtPosition(i_1, self.kol_stol).widget().currentText() == '>=':
-                for j_1 in range(self.kol_str):
-                    if j_1 == i_1:
-                        mat[j_1].append(-1)
-                    else:
-                        mat[j_1].append(0)
-
-        self.len_W = int(len(W))
-
-        for i_1 in range(len(mat[0]) - self.len_W):
-            W.append(0)
-
-        # Третий этап сохранения (добавляем свободные члены)
-        for i_1 in range(self.kol_str):
-            mat[i_1].append(float(self.gridLayout.itemAtPosition(i_1, self.kol_stol + 1).widget().text()))
-
-        # Четвёртый этап сохранения (представляем все данные с помощью Fraction)
-        for i_1 in range(len(mat)):
-            for j_1 in range(len(mat[0])):
-                mat[i_1][j_1] = Fraction(str(mat[i_1][j_1]))
-        for i_1 in range(len(W)):
-            W[i_1] = Fraction(str(W[i_1]))
-
-        """ ГОТОВО """
-        print(mat)
-        print(W)
+    def toSimplexData(self):
+        SimplexOgr, SimplexW, max_or_min = SimplexData(self.kol_str, self.kol_stol, self.gridLayout)
+        print(SimplexOgr)
+        print(SimplexW)
+        print(max_or_min)
 
 
 class FormInfo(QtWidgets.QDialog):
