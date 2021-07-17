@@ -4,6 +4,7 @@
 from fractions import Fraction
 import numpy as np
 import copy
+from tabulate import tabulate   # вывод в виде таблиц
 
 def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
 
@@ -11,100 +12,141 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
     global num_iter
     global OTVET
 
-    OTVET = ''
+    # Создаём заголовки (headers) для таблицы
+    tabHeaders = []
+    for i in range(len(SimplexW)):
+        tabHeaders.append('X'+str(i+1))     # добавляем иксы
+    tabHeaders.append('B')  # добавляем B
 
-    # НАЧАЛЬНОЕ БАЗИСНОЕ РЕШЕНИЕ
+
+    OTVET = ''  # здесь будут все шаги решения
+
+    # ИСХОДНАЯ МАТРИЦА
+    OTVET += ('\nИсходная матрица...\n')
+    OTVET += tabulate(tabular_data=SimplexOgr, headers=tabHeaders, tablefmt="fancy_grid")   # вывод в виде таблицы в нужном формате
+    OTVET += ('\n\n')
+
+
+    """ НАЧАЛЬНОЕ БАЗИСНОЕ РЕШЕНИЕ """
     # Находим базисные переменные. Минор матрицы, составленной из этих переменных, не должен быть равен 0.
-    # В списке maybe_num_baz будут находится индексы столбцов матрицы SimplexOgr, которые возможно будут являться базисными.
 
-    maybe_num_baz = []
-    for i_1 in range(10**(len(SimplexOgr)-1), 10**len(SimplexOgr)):
-        nums = list(str(i_1))
-        counter = 0
-        for j_1 in range(len(nums)):
-            if int(nums[0]) <= len(SimplexOgr[0])-(len(SimplexOgr)-2) and int(nums[-1]) <= len(SimplexOgr[0])-1:
-                if j_1 != len(nums)-1:
-                    if nums[j_1] < nums[j_1+1]:
-                        counter += 1
+    allNumsBaz = []  # в список allNumsBaz будут занесены все последовательности индексов столбцов матрицы
 
-        if counter == len(SimplexOgr)-1:
-            maybe_num_baz.append(nums)
+    for i in range(10**(len(SimplexOgr)-1), 10**len(SimplexOgr)):  # пробегаем диапозон от 1000 до 10000 (когда нужно 4 баз.пер.)
+        nums = list(str(i))     # представляем число в виде массиве (разбиваем число на цифры)
+        # Выставляем ограничения на первый и последний элементы списка
+        if int(nums[0]) <= (len(SimplexOgr[0]))-len(nums) and int(nums[-1]) <= len(SimplexOgr[0])-1:
+            counter = 0     # счётчик успехов
+            for j in range(len(nums)-1):    # пробегаемся по соседним парам
+                if nums[j] < nums[j+1]:     # если каждая рассматриваемая цифра меньше следующей, то
+                    counter += 1    # увеличиваем значение счётчика
+            if counter == len(nums)-1:  # если последовательность выполняет все условия, то
+                allNumsBaz.append(nums)  # заносим её в список с последовательностями
 
-    # Теперь проверяем, минор матрицы, составленной из столбцов, будет равен 0 или нет.
-    for i_1 in range(len(maybe_num_baz)):
-        mat2 = []
-        for j_1 in range(len(SimplexOgr)):
-            mat2.append([])
-            for k_1 in range(len(SimplexOgr)):
-                mat2[j_1].append(int(SimplexOgr[k_1][int(maybe_num_baz[i_1][j_1])-1]))
+    # Теперь проверяем каждый вариант последовательности из списка allNumsBaz. (пока не найдётся подходящий)
+    # Если определитель, составленный из столбцов, будет не равен 0, то опорное решение найдено.
+    Num_baz = None  # здесь будет список с базисными переменными
+    for i in range(len(allNumsBaz)):
+        MinorSimplexOgr = []    # здесь будет находится квадратная матрица, составленная из определённых столбцов
+        for j in range(len(SimplexOgr)):
+            MinorSimplexOgr.append([])
+            for k in range(len(SimplexOgr)):
+                MinorSimplexOgr[j].append(int(SimplexOgr[k][int(allNumsBaz[i][j])-1]))  # добавляем элемент из нужного столбца
 
-        baz = np.array(mat2)
+        if int(np.linalg.det(np.array(MinorSimplexOgr))) != 0:  # если определитель получившейся матрицы не равен 0, то
+            OTVET += ('Базисные переменные найдены:' + ' ')
+            Num_baz = allNumsBaz[i]     # список с базесными переменными
 
-        if int(np.linalg.det(baz)) != 0:
-            OTVET += ('Базисное переменные найдены:' + ' ')
-            for j_1 in range(len(SimplexOgr)):
-                OTVET += ('X' + str(maybe_num_baz[i_1][j_1]) + ' ')
+            for j in range(len(SimplexOgr)):
+                OTVET += ('X' + str(allNumsBaz[i][j]) + ' ')
             OTVET += ('\n')
-            break
+            break   # если последовательность найдена, то выходим из цикла (заканчиваем поиск)
 
-    # Находим начальное базисное решение с помощью метода Гаусса-Жордана.
-    mat2 = copy.deepcopy(SimplexOgr)  # копия матрицы mat
 
-    for X_1 in range(len(SimplexOgr)):
+    # Создаём новую матрицу (на основе SimplexOgr), в которой столбцы с базисными переменными находятся в начале
+    firstBazisSimplexOgr = []
+    for i in range(len(SimplexOgr)):  # пробегаемся по строкам
+        firstBazisSimplexOgr.append([])
+        for j in range(len(SimplexOgr[0])):    # пробегаемся по столбцам
+            if j < len(Num_baz):  # если рассматриваются базисные стобцы, то
+                firstBazisSimplexOgr[i].append(SimplexOgr[i][int(Num_baz[j])-1])     # заполняем именно базисными столбцами
+            else:   # если закончилось рассмотрение базисных столбцов, то
+                firstBazisSimplexOgr[i].append(SimplexOgr[i][j])  # заполняем оставшимися столбцами
 
-        SimplexOgr = copy.deepcopy(mat2)  # копия матрицы mat2
+    # Переставляем заголовки (headers) для таблицы
+    firstBazisTabHeaders = []
+    for i in range(len(tabHeaders)-1):
+        if i < len(Num_baz):  # если рассматриваются базисные стобцы, то
+            firstBazisTabHeaders.append('X'+str(Num_baz[i]))  # заполняем именно базисными столбцами
+        else:  # если закончилось рассмотрение базисных столбцов, то
+            firstBazisTabHeaders.append('X'+str(i+1))  # заполняем оставшимися столбцами
+    firstBazisTabHeaders.append('B')  # добавляем B
+    # Добавляем к списку с заголовками для таблицы (headers) № баз. (в начале списка)
+    firstBazisTabHeaders.insert(0, "№ баз.")
 
-        for A_1 in range(len(SimplexOgr)):
-            if A_1 != X_1:
-                for B_1 in range(len(SimplexOgr[A_1])):
-                    if SimplexOgr[X_1][X_1] == 0:
-                        mat2[A_1][B_1] = 0
+
+    # Находим начальное базисное решение относительно базисных переменных с помощью метода Гаусса-Жордана.
+
+    copySimplexOgr = copy.deepcopy(SimplexOgr)  # копия матрицы SimplexOgr
+
+    for X in range(len(copySimplexOgr)):
+        for A in range(len(SimplexOgr)):
+            if A != X:
+                for B in range(len(SimplexOgr[A])):
+                    if SimplexOgr[X][X] == 0:
+                        copySimplexOgr[A][B] = 0
                     else:
-                        mat2[A_1][B_1] = Fraction(SimplexOgr[A_1][B_1], 1) - Fraction(SimplexOgr[A_1][X_1] * SimplexOgr[X_1][B_1], SimplexOgr[X_1][X_1])
+                        copySimplexOgr[A][B] = Fraction(SimplexOgr[A][B], 1) - Fraction(SimplexOgr[A][X] * SimplexOgr[X][B], SimplexOgr[X][X])
 
-        for I_1 in range(len(SimplexOgr[X_1])):
-            if SimplexOgr[X_1][X_1] == 0:
-                mat2[X_1][X_1] = 0
+        for I_1 in range(len(SimplexOgr[X])):
+            if SimplexOgr[X][X] == 0:
+                copySimplexOgr[X][X] = 0
             else:
-                mat2[X_1][I_1] = Fraction(SimplexOgr[X_1][I_1], SimplexOgr[X_1][X_1])
+                copySimplexOgr[X][I_1] = Fraction(SimplexOgr[X][I_1], SimplexOgr[X][X])
+
+        SimplexOgr = copy.deepcopy(copySimplexOgr)  # сохраняем изменения
+
 
     # Итоговая матрица
-
     OTVET += ('\nИтоговая матрица...\n')
+    allTab = []
+    for i in range(len(Num_baz)):
+        allTab.append([Num_baz[i]] + firstBazisSimplexOgr[i])
+    OTVET += tabulate(tabular_data=allTab, headers=firstBazisTabHeaders, tablefmt="fancy_grid")  # вывод в виде таблицы в нужном формате
     OTVET += ('\n')
-    for i_1 in range(len(mat2)):
-        for j_1 in range(len(mat2[i_1])):
-            if j_1 == len(mat2[i_1])-1:
-                OTVET += ('|' + ' ')
-                OTVET += (str(mat2[i_1][j_1]))
-            else:
-                OTVET += (str(mat2[i_1][j_1]) + ' ')
-        OTVET += ('\n')
+
+
+
+
+
+
+# ================================= ОТСЮДА ПРОДОЛЖИТЬ =========================
+
 
     # Общее решение
-
     OTVET += ('\nОбщее решение...\n')
     OTVET += ('\n')
-    for i_1 in range(len(mat2)):
-        otvet = 'X' + str(i_1+1) + ' = ' + str(mat2[i_1][-1])
-        for j_1 in range(len(mat2[i_1])-(i_1+2)):
-            if mat2[i_1][i_1+(j_1+1)] != 0:
-                if mat2[i_1][i_1+(j_1+1)] > 0:
-                    otvet += ' - ' + str(mat2[i_1][i_1+(j_1+1)]) + ' X' + str(i_1+(j_1+1)+1)
-                if mat2[i_1][i_1+(j_1+1)] < 0:
-                    otvet += ' + ' + str(-(mat2[i_1][i_1+(j_1+1)])) + ' X' + str(i_1+(j_1+1)+1)
+    for i in range(len(copySimplexOgr)):
+        otvet = 'X' + str(i+1) + ' = ' + str(copySimplexOgr[i][-1])
+        for j in range(len(copySimplexOgr[i])-(i+2)):
+            if copySimplexOgr[i][i+(j+1)] != 0:
+                if copySimplexOgr[i][i+(j+1)] > 0:
+                    otvet += ' - ' + str(copySimplexOgr[i][i+(j+1)]) + ' X' + str(i+(j+1)+1)
+                if copySimplexOgr[i][i+(j+1)] < 0:
+                    otvet += ' + ' + str(-(copySimplexOgr[i][i+(j+1)])) + ' X' + str(i+(j+1)+1)
         OTVET += (str(otvet) + '\n')
 
-    # Базисное решение
 
+    # Базисное решение
     OTVET += ('\nБазисное решение...\n')
     OTVET += ('\n')
-    for i_1 in range(len(mat2)):
-        OTVET += ('X' + str(i_1+1) + ' = ' + str(mat2[i_1][-1]) + '\n')
+    for i in range(len(copySimplexOgr)):
+        OTVET += ('X' + str(i+1) + ' = ' + str(copySimplexOgr[i][-1]) + '\n')
+
 
 
     # ПРОВЕРЯЕМ НАЙДЕННОЕ БАЗИСНОЕ РЕШЕНИЕ НА ОПОРНОСТЬ
-    for i_1 in mat2:
+    for i_1 in copySimplexOgr:
         if i_1[-1] < 0:
             OTVET += ('\nНайденное базисное решение - не опорное.\n')
             yes_or_no = 0
@@ -120,32 +162,32 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
     while yes_or_no != 1:
 
         # Находим наименьшее отрицательное число в столбце свободных членов (в столбце B).
-        min_el = max(mat2[0])
+        min_el = max(copySimplexOgr[0])
         raz_stol = 0
 
-        for i_1 in range(len(mat2)):
-            if mat2[i_1][-1] < min_el:
-                min_el = mat2[i_1][-1]
+        for i_1 in range(len(copySimplexOgr)):
+            if copySimplexOgr[i_1][-1] < min_el:
+                min_el = copySimplexOgr[i_1][-1]
                 raz_stol = i_1
 
         # Находим индекс разрешающего столбца (наименьшее отрицательное число в строке).
-        min_el = max(mat2[raz_stol])
+        min_el = max(copySimplexOgr[raz_stol])
         for i_1 in range(len(SimplexOgr[0])-1):
-            if mat2[raz_stol][i_1] < min_el:
-                min_el = mat2[raz_stol][i_1]
+            if copySimplexOgr[raz_stol][i_1] < min_el:
+                min_el = copySimplexOgr[raz_stol][i_1]
 
-        raz_stol = mat2[raz_stol].index(min_el)
+        raz_stol = copySimplexOgr[raz_stol].index(min_el)
 
         if min_el > 0:
             OTVET += ('\nНет решения ЗЛП\n')
 
         # Находим индекс разрешающей строки (наименьшее полижетельное отношение).
-        min_el = Fraction(mat2[0][-1], mat2[0][raz_stol])
+        min_el = Fraction(copySimplexOgr[0][-1], copySimplexOgr[0][raz_stol])
         raz_str = 0
 
-        for i_1 in range(len(mat2)):
-            if 0 < Fraction(mat2[i_1][-1], mat2[i_1][raz_stol]) < min_el:
-                min_el = Fraction(mat2[i_1][-1], mat2[i_1][raz_stol])
+        for i_1 in range(len(copySimplexOgr)):
+            if 0 < Fraction(copySimplexOgr[i_1][-1], copySimplexOgr[i_1][raz_stol]) < min_el:
+                min_el = Fraction(copySimplexOgr[i_1][-1], copySimplexOgr[i_1][raz_stol])
                 raz_str = i_1
 
         # Выполняем процедуру однократного замещения.
@@ -155,36 +197,33 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
 
         # Создадим пустую матрицу.
         SimplexOgr = []
-        for i_1 in range(len(mat2)):
+        for i_1 in range(len(copySimplexOgr)):
             SimplexOgr.append([])
 
         # Начнём процедуру.
-        for i_1 in range(len(mat2)):
-            for j_1 in range(len(mat2[i_1])):
+        for i_1 in range(len(copySimplexOgr)):
+            for j_1 in range(len(copySimplexOgr[i_1])):
                 if i_1 == raz_str:
-                    if mat2[raz_str][raz_stol] == 0:
+                    if copySimplexOgr[raz_str][raz_stol] == 0:
                         SimplexOgr[i_1].append('∞')
                     else:
-                        SimplexOgr[i_1].append(Fraction(mat2[raz_str][j_1], mat2[raz_str][raz_stol]))
+                        SimplexOgr[i_1].append(Fraction(copySimplexOgr[raz_str][j_1], copySimplexOgr[raz_str][raz_stol]))
                 else:
-                    if mat2[raz_str][raz_stol] == 0:
+                    if copySimplexOgr[raz_str][raz_stol] == 0:
                         SimplexOgr[i_1].append('-∞')
                     else:
-                        SimplexOgr[i_1].append(mat2[i_1][j_1] - (
-                                    Fraction(mat2[raz_str][j_1], mat2[raz_str][raz_stol]) * mat2[i_1][raz_stol]))
+                        SimplexOgr[i_1].append(copySimplexOgr[i_1][j_1] - (
+                                    Fraction(copySimplexOgr[raz_str][j_1], copySimplexOgr[raz_str][raz_stol]) * copySimplexOgr[i_1][raz_stol]))
 
         # Выводим матрицу.
         OTVET += ('\nОпорное базисное решение. Итерация №' + str(num_iter) + '\n')
-        for i_1 in range(len(SimplexOgr)):
-            for j_1 in range(len(SimplexOgr[0])):
-                OTVET += (str(SimplexOgr[i_1][j_1]) + ' ')
-            OTVET += ('\n')
-
-        # Заменяем значения матрицы "mat2" на значения матрицы "SimplexOgr".
-        mat2 = copy.deepcopy(SimplexOgr)
+        OTVET += tabulate(tabular_data=SimplexOgr, headers=tabHeaders, tablefmt="fancy_grid")  # вывод в виде таблицы в нужном формате
+        OTVET += '\n'
+        # Заменяем значения матрицы "copySimplexOgr" на значения матрицы "SimplexOgr".
+        copySimplexOgr = copy.deepcopy(SimplexOgr)
 
         # ПРОВЕРЯЕМ НОВОЕ БАЗИСНОЕ РЕШЕНИЕ НА ОПОРНОСТЬ
-        for i_1 in mat2:
+        for i_1 in copySimplexOgr:
             if i_1[-1] < 0:
                 OTVET += ('\nНовое базисное решение - не опорное.\n')
                 num_iter += 1
@@ -197,8 +236,8 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
     # НАХОДИМ ЗНАЧЕНИЕ КРИТЕРИАЛЬНОЙ ФУНКЦИИ
 
     W_zna = 0
-    for i_1 in range(len(mat2)):
-        W_zna += mat2[i_1][-1] * SimplexW[i_1]
+    for i_1 in range(len(copySimplexOgr)):
+        W_zna += copySimplexOgr[i_1][-1] * SimplexW[i_1]
 
     OTVET += str('\n' + 'SimplexW = ' + str(W_zna) + '\n')
 
@@ -215,21 +254,21 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
     OTVET += ('\n')
 
     OTVET += ('\n' + 'Ci = ')
-    for i_1 in range(len(mat2)):
+    for i_1 in range(len(copySimplexOgr)):
         Ci.append(SimplexW[i_1])
         OTVET += (str(SimplexW[i_1]) + ' ')
     OTVET += ('\n')
 
-    sim_tab = copy.deepcopy(mat2)  # копия матрицы mat2
+    sim_tab = copy.deepcopy(copySimplexOgr)  # копия матрицы copySimplexOgr
 
 
     # НАХОДИМ ОЦЕНКИ ПЕРЕМЕННЫХ ОТНОСИТЕЛЬНО ВЫБРАННОГО БАЗИСА
 
     sim_tab.append([])  # будем заполнять строку оценок
-    for i_1 in range(len(mat2[0]) - 1):
+    for i_1 in range(len(copySimplexOgr[0]) - 1):
         Zj = 0
-        for j_1 in range(len(mat2)):
-            Zj += mat2[j_1][i_1] * Ci[j_1]
+        for j_1 in range(len(copySimplexOgr)):
+            Zj += copySimplexOgr[j_1][i_1] * Ci[j_1]
         sim_tab[-1].append(Zj - Cj[i_1])
 
     sim_tab[-1].append(W_zna)
@@ -249,6 +288,8 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
 
     num_iter = 0  # подсчёт кол-ва итераций для симплекс-метода
 
+    # Добавляем к списку с заголовками для таблицы (headers) θ (в конце списка)
+    tabHeaders.append('θ')
 
     def sim_met():
 
@@ -332,17 +373,13 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
 
         # Выводим матрицу.
         OTVET += ('\nИтерация №' + str(num_iter) + '\n')
-        for i_1 in range(len(SimplexOgr)):
-            if i_1 <= len(Q) - 1:
-                OTVET += (str(Num_baz[i_1]) + ' ')
-                for j_1 in range(len(SimplexOgr[0])):
-                    OTVET += (str(SimplexOgr[i_1][j_1]) + ' ')
-                OTVET += (str(Q[i_1]) + '\n')
-            else:
-                OTVET += (' ' + ' ' + ' ')
-                for j_1 in range(len(SimplexOgr[0])):
-                    OTVET += (str(SimplexOgr[i_1][j_1]) + ' ')
-                OTVET += (' ' + '\n')
+        allTab = []
+        for i in range(len(Num_baz)):
+            allTab.append([Num_baz[i]]+SimplexOgr[i]+[Q[i]])
+        allTab.append([''] + SimplexOgr[-1] + [''])
+        OTVET += tabulate(tabular_data=allTab, headers=tabHeaders, tablefmt="fancy_grid")  # вывод в виде таблицы в нужном формате
+        OTVET += ('\n')
+
 
         # Заменяем значения матрицы "sim_tab" на значения матрицы "SimplexOgr".
         sim_tab = copy.deepcopy(SimplexOgr)

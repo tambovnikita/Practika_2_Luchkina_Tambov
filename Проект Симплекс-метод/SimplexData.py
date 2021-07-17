@@ -5,7 +5,7 @@ from simplexmethod import SimplexMethod
 
 # После нажатия на кнопку "Решить", введённые данные будут обрабатываться
 def SimplexData(kol_str, kol_stol, gridLayout):
-
+    '''
     SimplexOgr = []
     SimplexW = []
 
@@ -65,6 +65,10 @@ def SimplexData(kol_str, kol_stol, gridLayout):
         else:
             SimplexOgr[i].append(float(gridLayout.itemAtPosition(i, kol_stol+1).widget().text()))
 
+    '''
+    SimplexOgr = [[4.0, 2.0, 5.0, 1, 0, 0, 0, 6.0], [1.6, 4.0, 2.0, 0, 1, 0, 0, 9.0], [24.0, 36.0, 42.0, 0, 0, 1, 0, 6.0], [2.0, 1.0, 1.6, 0, 0, 0, 1, 0.2]]    # ОТЛАДКА
+    SimplexW = [6.0, 6.0, 8.0, 0, 0, 0, 0]      # ОТЛАДКА
+    max_or_min = 'MAX'      # ОТЛАДКА
 
     # Четвёртый этап (представляем все данные в виде дробей (Fraction))
     for i in range(len(SimplexOgr)):
@@ -73,8 +77,15 @@ def SimplexData(kol_str, kol_stol, gridLayout):
     for i in range(len(SimplexW)):
         SimplexW[i] = Fraction(str(SimplexW[i]))
 
+    '''
     # Определяем и получаем значение MAX или MIN
     max_or_min = gridLayout.itemAtPosition(kol_str, kol_stol + 1).widget().currentText()
+    '''
+
 
     """ Все данные для дальнийших математических преобразований готовы! """
     return SimplexMethod(SimplexOgr, SimplexW, max_or_min)
+
+
+
+print(SimplexData(0, 0, 0))     # ОТЛАДКА
