@@ -19,7 +19,7 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
 
     # ИСХОДНАЯ МАТРИЦА
     OTVET += ('\nИсходная матрица...\n')
-    OTVET += tabulate(tabular_data=SimplexOgr, headers=tabHeaders, tablefmt="fancy_grid")   # вывод в виде таблицы в нужном формате
+    OTVET += (tabulate(tabular_data=SimplexOgr, headers=tabHeaders, tablefmt="fancy_grid"))   # вывод в виде таблицы в нужном формате
     OTVET += ('\n\n')
 
 
@@ -109,7 +109,7 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
     allTab = []
     for i in range(len(Num_baz)):
         allTab.append([Num_baz[i]] + firstBazisSimplexOgr[i])
-    OTVET += tabulate(tabular_data=allTab, headers=firstBazisTabHeaders, tablefmt="fancy_grid")  # вывод в виде таблицы в нужном формате
+    OTVET += (tabulate(tabular_data=allTab, headers=firstBazisTabHeaders, tablefmt="fancy_grid"))  # вывод в виде таблицы в нужном формате
     OTVET += ('\n')
 
 
@@ -162,8 +162,9 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
     allTab = []
     for i in range(len(Num_baz)):
         allTab.append([Num_baz[i]] + SimplexOgr[i])
-    OTVET += tabulate(tabular_data=allTab, headers=tabHeaders, tablefmt="fancy_grid")  # вывод в виде таблицы в нужном формате
+    OTVET += (tabulate(tabular_data=allTab, headers=tabHeaders, tablefmt="fancy_grid"))  # вывод в виде таблицы в нужном формате
     OTVET += ('\n')
+
 
 
     """ ПРОЦЕДУРА ОДНОКРАТНОГО ЗАМЕЩЕНИЯ (АЛГОРИТМ ПОИСКА БАЗИСНОГО ОПОРНОГО РЕШЕНИЯ) """
@@ -239,7 +240,7 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
         for i in range(len(Num_baz)):
             allTab.append([Num_baz[i]] + copySimplexOgr[i])
         OTVET += ('\nОпорное базисное решение. Итерация №' + str(num_iter) + '\n')
-        OTVET += tabulate(tabular_data=allTab, headers=tabHeaders, tablefmt="fancy_grid")  # вывод в виде таблицы в нужном формате
+        OTVET += (tabulate(tabular_data=allTab, headers=tabHeaders, tablefmt="fancy_grid"))  # вывод в виде таблицы в нужном формате
         OTVET += ('\n')
 
         # Заменяем значения матрицы "SimplexOgr" на значения матрицы "copySimplexOgr".
@@ -344,14 +345,18 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
             else:   # если элемент из разрешающего столбца не равен 0, то
                 Q.append(Fraction(SimplexOgr[i][-1], SimplexOgr[i][raz_stol]))  # добавляем их соотношение
 
-        minInQ = 0   # минимальный положительный элемент в столбце 'θ'
-        raz_strok = 0  # разрешающая строка
+        minInQ = None   # минимальный положительный элемент в столбце 'θ'
+        raz_strok = None  # разрешающая строка
+
+        for i in range(len(Q)):     # Находим значение, от которого будем отталкиваться в поисках минимума
+            if Q[i] != '∞':
+                if Q[i] >= 0:
+                    minInQ = Q[i]
 
         for i in range(len(Q)):
-            if Q[i] != '∞':
-                if Q[i] <= minInQ and Q[i] >= 0:
-                    minInQ = Q[i]
-                    raz_strok = i
+            if Q[i] <= minInQ and Q[i] >= 0:
+                minInQ = Q[i]
+                raz_strok = i
 
 
         # ВЫПОЛНЯЕМ ИТЕРАЦИЮ
@@ -387,7 +392,7 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
         allTab = []
         for i in range(len(Num_baz)):
             allTab.append([Num_baz[i]]+copySimplexOgr[i]+[Q[i]])
-        allTab.append([''] + copySimplexOgr[-1] + [TotalW])
+        allTab.append([''] + copySimplexOgr[-1] + [''])
         OTVET += (tabulate(tabular_data=allTab, headers=tabHeaders, tablefmt="fancy_grid"))  # вывод в виде таблицы в нужном формате
         OTVET += ('\n')
 
@@ -397,6 +402,16 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
         return SimplexOgr, OTVET
 
 
+
+    # Выводим матрицу
+    OTVET += ('\nИтерация №' + str(num_iter) + '\n')
+    allTab = []
+    for i in range(len(Num_baz)):
+        allTab.append([Num_baz[i]] + SimplexOgr[i] + [Q[i]])
+    allTab.append([''] + SimplexOgr[-1] + [''])
+    OTVET += (tabulate(tabular_data=allTab, headers=tabHeaders,
+                   tablefmt="fancy_grid"))  # вывод в виде таблицы в нужном формате
+    OTVET += ('\n')
 
 
 
@@ -425,7 +440,7 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
 
 
     """ ОТВЕТ """
-    print(Num_baz)
+
     OTVET += ('\nОТВЕТ...\n\n')
     for i in range(len(SimplexOgr[0])):     # пробегаемся по всем столбцам
         if i == len(SimplexOgr[0])-1:

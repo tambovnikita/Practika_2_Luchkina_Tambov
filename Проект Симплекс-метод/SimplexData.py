@@ -79,4 +79,5 @@ def SimplexData(kol_str, kol_stol, gridLayout):
 
 
     """ Все данные для дальнийших математических преобразований готовы! """
+
     return SimplexMethod(SimplexOgr, SimplexW, max_or_min)
