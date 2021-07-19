@@ -204,10 +204,10 @@ class MyWindow(QMainWindow):
 
             self.MainButton.clicked.connect(self.toSimplexData)
 
-    # Функция, вызывающая обработчик-сборщик введённых данных
+    # Функция, открывающая окно Решение
     def toSimplexData(self):
-        OTVET = SimplexData(self.kol_str, self.kol_stol, self.gridLayout)
-        print(OTVET)
+        formOtvet = FormOTVET(self)     # создаём объект класса FormOTVET (открываем окно с Решением)
+        formOtvet.exec_()
 
 
 class FormInfo(QtWidgets.QDialog):
@@ -272,6 +272,38 @@ class FormInfo(QtWidgets.QDialog):
             "относительно измененного базиса – проводим процедуру однократного замещения. Проводим итерационные вычисления "
             "до получения оптимального решения.</font>"
         )
+
+
+
+
+# Класс окна с Решением задачи
+class FormOTVET(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(FormOTVET, self).__init__(parent)
+        self.setGeometry(1100, 80, 600, 900)
+        self.setWindowTitle('Решение задачи')
+        # градиентный фон
+        p = QtGui.QPalette()
+        gradient = QtGui.QLinearGradient(0, 0, 0, 400)
+        gradient.setColorAt(0.0, QtGui.QColor(240, 240, 240))
+        gradient.setColorAt(1.0, QtGui.QColor(200, 200, 200))
+        p.setBrush(QtGui.QPalette.Window, QtGui.QBrush(gradient))
+        self.setPalette(p)
+
+        self.textEdit = QTextEdit(self)
+        self.textEdit.setReadOnly(True)  # Только чтение.
+        self.textEdit.setGeometry(QtCore.QRect(10, 10, 580, 880))  # Меняем размер и положение.
+        self.textEdit.setFont(QtGui.QFont('Arial'))  # Изменяем шрифт.
+
+
+        # Функция, вызывающая обработчик-сборщик введённых данных
+        OTVET = SimplexData(win.kol_str, win.kol_stol, win.gridLayout)
+        self.textEdit.setText(OTVET)    # вставляем решение в окошко для текста
+
+
+
+
+
 
 app = QApplication(sys.argv)
 win = MyWindow()
