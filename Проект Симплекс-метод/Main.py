@@ -1,7 +1,7 @@
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QTextEdit, QComboBox, QFrame,\
-    QGridLayout
+    QGridLayout, QScrollArea, QVBoxLayout, QWidget, QFormLayout, QGroupBox
 import sys
 
 from simplexdata import SimplexData
@@ -31,35 +31,35 @@ class MyWindow(QMainWindow):
         self.mainLbl.setText("С и м п л е к с  -  м е т о д")  # Меняем текст
         self.mainLbl.setStyleSheet("color: #C71585")  # меняем цвет текста
 
-        self.mainLbl1 = QLabel(self)
-        self.mainLbl1.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
-        self.mainLbl1.setGeometry(QtCore.QRect(50, 150, 530, 50))  # Меняем размер и положение
-        self.mainLbl1.setText("количество ограничений")  # Меняем текст
-        self.mainLbl1.setStyleSheet("color: #C71585")  # меняем цвет текста
+        self.lblOgr = QLabel(self)
+        self.lblOgr.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
+        self.lblOgr.setGeometry(QtCore.QRect(50, 150, 530, 50))  # Меняем размер и положение
+        self.lblOgr.setText("количество ограничений")  # Меняем текст
+        self.lblOgr.setStyleSheet("color: #C71585")  # меняем цвет текста
 
-        self.lineEdit1 = QLineEdit(self)
-        self.lineEdit1.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
-        self.lineEdit1.setGeometry(QtCore.QRect(430, 160, 50, 35))  # Меняем размер и положение.
-        self.lineEdit1.setStyleSheet("color: #7f4355")  # меняем цвет текста
-        self.lineEdit1.setValidator(self.validatorInt)  # разрешается ввод только целых чисел
+        self.leOgr = QLineEdit(self)
+        self.leOgr.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
+        self.leOgr.setGeometry(QtCore.QRect(430, 160, 50, 35))  # Меняем размер и положение.
+        self.leOgr.setStyleSheet("color: #7f4355")  # меняем цвет текста
+        self.leOgr.setValidator(self.validatorInt)  # разрешается ввод только целых чисел
 
-        self.mainLbl2 = QLabel(self)
-        self.mainLbl2.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
-        self.mainLbl2.setGeometry(QtCore.QRect(550, 150, 530, 50))  # Меняем размер и положение
-        self.mainLbl2.setText("количество переменных")  # Меняем текст
-        self.mainLbl2.setStyleSheet("color: #C71585")  # меняем цвет текста
+        self.lblPer = QLabel(self)
+        self.lblPer.setFont(QtGui.QFont('Century Gothic', 18))  # Изменяем шрифт
+        self.lblPer.setGeometry(QtCore.QRect(550, 150, 530, 50))  # Меняем размер и положение
+        self.lblPer.setText("количество переменных")  # Меняем текст
+        self.lblPer.setStyleSheet("color: #C71585")  # меняем цвет текста
 
-        self.lineEdit2 = QLineEdit(self)
-        self.lineEdit2.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
-        self.lineEdit2.setGeometry(QtCore.QRect(925, 160, 50, 35))  # Меняем размер и положение.
-        self.lineEdit2.setStyleSheet("color: #7f4355")  # меняем цвет текста
-        self.lineEdit2.setValidator(self.validatorInt)  # разрешается ввод только целых чисел
+        self.lePer = QLineEdit(self)
+        self.lePer.setFont(QtGui.QFont('Century Gothic', 15))  # Изменяем шрифт.
+        self.lePer.setGeometry(QtCore.QRect(925, 160, 50, 35))  # Меняем размер и положение.
+        self.lePer.setStyleSheet("color: #7f4355")  # меняем цвет текста
+        self.lePer.setValidator(self.validatorInt)  # разрешается ввод только целых чисел
 
-        self.mainBtn = QPushButton(self)
-        self.mainBtn.setText("Продолжить")  # Меняем текст
-        self.mainBtn.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
-        self.mainBtn.setGeometry(QtCore.QRect(270, 230, 500, 50))  # Меняем размер и положение.
-        self.mainBtn.setStyleSheet("""
+        self.btnContin = QPushButton(self)
+        self.btnContin.setText("Продолжить")  # Меняем текст
+        self.btnContin.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
+        self.btnContin.setGeometry(QtCore.QRect(270, 230, 500, 50))  # Меняем размер и положение.
+        self.btnContin.setStyleSheet("""
                 QPushButton {
                     background-color: #f8ebf4;
                     color: #7f4355;
@@ -76,13 +76,37 @@ class MyWindow(QMainWindow):
                     border-radius: 20px
                 }
         """)  # меняем цвет фона
-        self.mainBtn.clicked.connect(self.mainBtnClick)
+        self.btnContin.clicked.connect(self.btnContinClick)
 
-        self.infoBtn = QPushButton(self)
-        self.infoBtn.setText("Справка")  # Меняем текст
-        self.infoBtn.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
-        self.infoBtn.setGeometry(QtCore.QRect(800, 20, 200, 40))  # Меняем размер и положение.
-        self.infoBtn.setStyleSheet("""
+        self.btnExample = QPushButton(self)
+        self.btnExample.setText("Пример")  # Меняем текст
+        self.btnExample.setFont(QtGui.QFont('Century Gothic', 13))  # Изменяем шрифт.
+        self.btnExample.setGeometry(QtCore.QRect(550, 20, 240, 40))  # Меняем размер и положение.
+        self.btnExample.setStyleSheet("""
+                        QPushButton {
+                            background-color: white;
+                            color: #7f4355;
+                            border-radius: 20px
+                        }
+                        QPushButton:hover {
+                            background-color: #7f4355;
+                            color: white;
+                            border-radius: 20px
+                        }
+                        QPushButton:pressed {
+                            background-color: black;
+                            color: white;
+                            border-radius: 20px
+                        }
+                """)  # меняем цвет фона
+
+        self.btnExample.clicked.connect(self.btnExampleClick)  # подключаем кнопку "Пример" к слоту
+
+        self.btnInfo = QPushButton(self)
+        self.btnInfo.setText("Справка")  # Меняем текст
+        self.btnInfo.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
+        self.btnInfo.setGeometry(QtCore.QRect(800, 20, 200, 40))  # Меняем размер и положение.
+        self.btnInfo.setStyleSheet("""
                 QPushButton {
                     background-color: white;
                     color: #7f4355;
@@ -100,91 +124,119 @@ class MyWindow(QMainWindow):
                 }
         """)  # меняем цвет фона
 
-        self.infoBtn.clicked.connect(self.infoBtnClick)     # подключаем кнопку "Справка" к слоту
+        self.btnInfo.clicked.connect(self.btnInfoClick)     # подключаем кнопку "Справка" к слоту
 
         self.frame = QFrame(self)   # создаём псевдо-область, которая при нажатии будет удаляться и создаваться новая
         self.frame.hide()   # скроем псевдо-область
-        self.MainButton = QPushButton(self)     # создаём кнопку "Решить" заранее
-        self.MainButton.hide()      # скроем пока кнопку "Решить"
+        self.btnMain = QPushButton(self)     # создаём кнопку "Решить" заранее
+        self.btnMain.hide()      # скроем пока кнопку "Решить"
 
 
-    def infoBtnClick(self):     # вызывает диалоговое окно "Справка"
+    # Функция, вызывающая диалоговое окно "Справка"
+    def btnInfoClick(self):
         formInfo = FormInfo(self)
         formInfo.exec_()
 
 
-    def mainBtnClick(self):
+    # Функция, решающая пример задачи
+    def btnExampleClick(self):
+        self.leOgr.setText('4')     # заполняем поле "кол-во ограничений"
+        self.lePer.setText('3')     # заполняем поле "кол-во переменных"
+        self.btnContinClick()   # вызываем функцию для ввода данных
 
-        if self.lineEdit1.text() != '' and self.lineEdit2.text() != '':
+        ogrExample = [['4', '2', '5', '6'], ['1,6', '4', '2', '9'], ['24', '36', '42', '6'], ['2', '1', '1,6', '0,2']]  # ограничения
+        wExample = ['6', '6', '8']  # крит.фун.
+
+        # Устанавливаем левую часть ограничений
+        for i in range(len(ogrExample)):    # пробегаемся по строкам
+            for j in range(len(ogrExample[0])-1):   # пробегаемся почти по всем столбцам
+                self.gridLayout.itemAtPosition(i, j).widget().setText(ogrExample[i][j])
+        # Устанавливаем знаки и правую часть ограничений
+        for i in range(len(ogrExample)):
+            self.gridLayout.itemAtPosition(i, 3).widget().setCurrentIndex(0)   # по-умолчанию ставим "⩽"
+            self.gridLayout.itemAtPosition(i, 4).widget().setText(ogrExample[i][-1])
+        # Устанавливаем крит.функ. и значение MAX/MIN
+        for i in range(len(wExample)):
+            self.gridLayout.itemAtPosition(4, i).widget().setText(wExample[i])
+        self.gridLayout.itemAtPosition(4, 4).widget().setCurrentIndex(0)  # по-умолчанию ставим "MAX"
+
+        # Запускаем функцию, открывающую окно с решением
+        self.toSimplexData()
+
+
+    # Функция, открывающая поля ввода ограничений и крит.функ.
+    def btnContinClick(self):
+
+        if self.leOgr.text() != '' and self.lePer.text() != '':
             self.frame.deleteLater()
             self.frame = QFrame(self)
             self.setGeometry(50, 50, 1030, 910)     # делаем главное окно больше по высоте
             self.frame.show()   # показываем скрытую область
-            self.MainButton.show()  # показываем скрытую кнопку "Решить"
+            self.btnMain.show()  # показываем скрытую кнопку "Решить"
 
-            self.kol_str = int(self.lineEdit1.text())
-            self.kol_stol = int(self.lineEdit2.text())
+            self.kol_str = int(self.leOgr.text())
+            self.kol_stol = int(self.lePer.text())
 
             self.frame.setGeometry(QtCore.QRect(65, 330, 900, 450))  # Меняем размер и положение.
             self.frame.setStyleSheet("background-color: rgba(230,230,230,0.4); border-radius: 20px")
             self.gridLayout = QGridLayout()  # Размещение виджетов по сетке.
 
-            for i_1 in range(self.kol_str):
-                for j_1 in range(self.kol_stol):  # Вставляем QLineEdit (коэфф. в ограничениях).
+            for i in range(self.kol_str):
+                for j in range(self.kol_stol):  # Вставляем QLineEdit (коэфф. в ограничениях).
                     le = QLineEdit()
                     le.setFixedHeight(35)
                     le.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт
                     le.setValidator(self.validatorFloat)  # разрешается ввод только чисел
-                    self.gridLayout.addWidget(le, i_1, j_1)
+                    self.gridLayout.addWidget(le, i, j)
 
-                self.comboBox = QComboBox()
-                self.comboBox.setFixedHeight(30)
-                self.comboBox.setFixedWidth(50)
-                self.comboBox.setStyleSheet("border-radius: 10px")
-                self.comboBox.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
-                self.comboBox.addItem("⩽")
-                self.comboBox.addItem("=")
-                self.comboBox.addItem("⩾")
-                self.gridLayout.addWidget(self.comboBox, i_1, self.kol_stol)  # Вставляем QComboBox ("<=", "=", ">=").
+                self.cbZnak = QComboBox()
+                self.cbZnak.setFixedHeight(30)
+                self.cbZnak.setFixedWidth(50)
+                self.cbZnak.setStyleSheet("border-radius: 10px")
+                self.cbZnak.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт.
+                self.cbZnak.addItem("⩽")
+                self.cbZnak.addItem("=")
+                self.cbZnak.addItem("⩾")
+                self.gridLayout.addWidget(self.cbZnak, i, self.kol_stol)  # Вставляем cbZnak ("<=", "=", ">=").
 
                 le = QLineEdit()
                 le.setFixedHeight(35)
                 le.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт
                 le.setValidator(self.validatorFloat)  # разрешается ввод только чисел
-                self.gridLayout.addWidget(le, i_1, self.kol_stol + 1)  # Вставляем QLineEdit (свободные члены).
+                self.gridLayout.addWidget(le, i, self.kol_stol + 1)  # Вставляем QLineEdit (свободные члены).
 
 
-            for i_1 in range(self.kol_stol):  # Вставляем QLineEdit (коэфф. крит. функции).
+            for i in range(self.kol_stol):  # Вставляем QLineEdit (коэфф. крит. функции).
                 le = QLineEdit()
                 le.setFont(QtGui.QFont('Century Gothic', 14))  # Изменяем шрифт
                 le.setStyleSheet("margin-top: 30px")
                 le.setValidator(self.validatorFloat)  # разрешается ввод только чисел
-                self.gridLayout.addWidget(le, self.kol_str, i_1)
+                self.gridLayout.addWidget(le, self.kol_str, i)
 
-            self.label_strel = QLabel()
-            self.label_strel.setText(' 🠖')
-            self.label_strel.setFixedHeight(60)
-            self.label_strel.setStyleSheet("border-radius: 10px; margin-top: 30px")
-            self.label_strel.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
-            self.gridLayout.addWidget(self.label_strel, self.kol_str, self.kol_stol)  # Вставляем '🠖'.
+            self.lblStrel = QLabel()
+            self.lblStrel.setText(' 🠖')
+            self.lblStrel.setFixedHeight(60)
+            self.lblStrel.setStyleSheet("border-radius: 10px; margin-top: 30px")
+            self.lblStrel.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
+            self.gridLayout.addWidget(self.lblStrel, self.kol_str, self.kol_stol)  # Вставляем '🠖'.
 
-            self.comboBox_max_or_min = QComboBox()
-            self.comboBox_max_or_min.setFixedHeight(70)
-            self.comboBox_max_or_min.setFixedWidth(80)
-            self.comboBox_max_or_min.setFont(QtGui.QFont('Century Gothic', 12))  # Изменяем шрифт.
-            self.comboBox_max_or_min.addItem("MAX")
-            self.comboBox_max_or_min.addItem("MIN")
-            self.comboBox_max_or_min.setStyleSheet("border-radius: 10px; margin-top: 30px; padding-left: 15px")
+            self.cbMaxOrMin = QComboBox()
+            self.cbMaxOrMin.setFixedHeight(70)
+            self.cbMaxOrMin.setFixedWidth(80)
+            self.cbMaxOrMin.setFont(QtGui.QFont('Century Gothic', 12))  # Изменяем шрифт.
+            self.cbMaxOrMin.addItem("MAX")
+            self.cbMaxOrMin.addItem("MIN")
+            self.cbMaxOrMin.setStyleSheet("border-radius: 10px; margin-top: 30px; padding-left: 15px")
             # Вставляем QComboBox ("max", "min").
-            self.gridLayout.addWidget(self.comboBox_max_or_min, self.kol_str, self.kol_stol + 1)
+            self.gridLayout.addWidget(self.cbMaxOrMin, self.kol_str, self.kol_stol + 1)
 
 
             self.frame.setLayout(self.gridLayout)
 
-            self.MainButton.setText("Решение")  # Меняем текст
-            self.MainButton.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
-            self.MainButton.setGeometry(QtCore.QRect(185, 825, 670, 50))  # Изменяем размер и положение
-            self.MainButton.setStyleSheet("""
+            self.btnMain.setText("Решение")  # Меняем текст
+            self.btnMain.setFont(QtGui.QFont('Century Gothic', 16))  # Изменяем шрифт.
+            self.btnMain.setGeometry(QtCore.QRect(185, 825, 670, 50))  # Изменяем размер и положение
+            self.btnMain.setStyleSheet("""
                             QPushButton {
                                 background-color: #f8ebf4;
                                 color: #7f4355;
@@ -202,7 +254,7 @@ class MyWindow(QMainWindow):
                             }
                     """)  # меняем цвет фона
 
-            self.MainButton.clicked.connect(self.toSimplexData)
+            self.btnMain.clicked.connect(self.toSimplexData)
 
     # Функция, открывающая окно Решение
     def toSimplexData(self):
@@ -213,7 +265,8 @@ class MyWindow(QMainWindow):
 class FormInfo(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(FormInfo, self).__init__(parent)
-        self.setGeometry(1100, 80, 600, 900)
+
+        self.setGeometry(930, 80, 965, 900)
         self.setWindowTitle('Справка по Симплекс-методу')
         # градиентный фон
         p = QtGui.QPalette()
@@ -223,12 +276,24 @@ class FormInfo(QtWidgets.QDialog):
         p.setBrush(QtGui.QPalette.Window, QtGui.QBrush(gradient))
         self.setPalette(p)
 
-        self.textEdit = QTextEdit(self)
-        self.textEdit.setReadOnly(True)  # Только чтение.
-        self.textEdit.setGeometry(QtCore.QRect(10, 10, 580, 880))  # Меняем размер и положение.
-        self.textEdit.setFont(QtGui.QFont('Arial'))  # Изменяем шрифт.
-        self.textEdit.setHtml(
-            "<font color='black' size='8' style='white-space: pre-wrap'><b>        Что такое Симплекс-метод?</b></font>"
+        self.formLayout = QFormLayout(self)     # создаём контейнер для виджетов
+
+
+        self.teInfo1 = QTextEdit(self)       # создаём текстовую форму
+        self.teInfo1.setReadOnly(True)  # Только чтение.
+        self.teInfo1.setFixedHeight(440)     # фиксируем высоту
+        self.teInfo1.setFixedWidth(895)      # фиксируем ширину
+        self.teInfo1.setFont(QtGui.QFont('Arial'))  # Изменяем шрифт.
+        self.teInfo1.setStyleSheet("""
+                        QTextEdit {
+                            background-color: rgba(230,230,230,0.6);
+                            border-radius: 10px;
+                            padding: 10px;
+                        }
+                        """)  # внешнее оформление (установка стиля)
+
+        self.teInfo1.setHtml(
+            "<font color='black' size='8' style='white-space: pre-wrap'><b>                Что такое Симплекс-метод?</b></font>"
             "<hr/>"
             "<font color='black' size='5' style='white-space: pre-wrap'>\n    В симплекс-методе реализуется упорядоченный процесс, при котором, начиная "
             "с некоторой исходной допустимой угловой точки осуществляются последовательные переходы от одной допустимой "
@@ -237,17 +302,59 @@ class FormInfo(QtWidgets.QDialog):
             "в форме уравнений. Известно, что оптимальное решение (если такое имеется) достигается в одной из опорных "
             "точек (вершин ОДР), где по крайней мере k=n-m из переменных равны нулю. Выбираются какие-то k переменных "
             "в качестве свободных и выражаются через них остальные m базисных переменных. Решение может быть допустимым "
-            "или недопустимым. Оно допустимо, если все свободные члены неотрицательны.\n\n</font>"
-            "<font color='black' size='8' style='white-space: pre-wrap'><b>               Алгоритм решения:</b></font>"
+            "или недопустимым. Оно допустимо, если все свободные члены неотрицательны.</font>"
+        )
+        self.formLayout.addWidget(self.teInfo1)      # добавляем виджет в контейнер
+
+        self.teInfo2 = QTextEdit(self)  # создаём текстовую форму
+        self.teInfo2.setReadOnly(True)  # Только чтение.
+        self.teInfo2.setFixedHeight(390)     # фиксируем высоту
+        self.teInfo2.setFixedWidth(895)      # фиксируем ширину
+        self.teInfo2.setFont(QtGui.QFont('Arial'))  # Изменяем шрифт.
+        self.teInfo2.setStyleSheet("""
+                                QTextEdit {
+                                    background-color: rgba(230,230,230,0.6);
+                                    border-radius: 10px;
+                                    padding: 10px;
+                                }
+                                """)  # внешнее оформление (установка стиля)
+
+        self.teInfo2.setHtml(
+            "<font color='black' size='8' style='white-space: pre-wrap'><b>                       Алгоритм решения:</b></font>"
             "<hr/>"
-            "<font color='black' size='5' style='white-space: pre-wrap'>\n    1.    Приводим модель к канонической форме\n"
-            "    2.    Находим начальное базисное "
-            "решение\n   2.1    определяем базисные и свободные переменные\n   2.2.    Для нахождения общего решения СЛУ нам нужно "
+            "<font color='black' size='5' style='white-space: pre-wrap'>\n    1.    Приводим ЗЛП к стандартному (каноническому) виду\n"
+            "    2.    Находим начальное базисное решение.\n"
+            "   2.1    Выделяем свободные и базисные переменные\n   2.2.    Для нахождения общего решения СЛУ нам нужно "
             "базисные переменные выразить через свободные. Из каждого уравнения нам нужно исключить все базисные "
             "переменные кроме одной, т.е. базисную матрицу привести к единичной. Воспользуемся методом Гаусса-Жордана, "
             "в котором реализуются элементарные преобразования.\n   2.3    Приравниваем свободные переменные 0, находим базисные, "
             "таким образом получаем базисное решение системы (частное решение СЛУ при котором свободные переменные "
-            "обращаются в 0)\n    3.    Проверяем начальное базисное решения на опорность.\n   3.1    Условие неотрицательности не "
+            "обращаются в 0)"
+        )
+        self.formLayout.addWidget(self.teInfo2)  # добавляем виджет в контейнер
+
+        self.pixmap = QtGui.QPixmap("1.png")  # загружаем картинку
+        self.pixmap = self.pixmap.scaledToWidth(900)
+        self.img1 = QLabel(self)  # создаём холст для картинки
+        self.img1.setPixmap(self.pixmap)  # передаём холсту картинку
+        self.img1.setGeometry(QtCore.QRect(50, 700, 550, 580))  # меняем размер и положение
+        self.formLayout.addWidget(self.img1)  # добавляем виджет в контейнер
+
+        self.teInfo3 = QTextEdit(self)  # создаём текстовую форму
+        self.teInfo3.setReadOnly(True)  # Только чтение.
+        self.teInfo3.setFixedHeight(630)  # фиксируем высоту
+        self.teInfo3.setFixedWidth(895)  # фиксируем ширину
+        self.teInfo3.setFont(QtGui.QFont('Arial'))  # Изменяем шрифт.
+        self.teInfo3.setStyleSheet("""
+                                        QTextEdit {
+                                            background-color: rgba(230,230,230,0.6);
+                                            border-radius: 10px;
+                                            padding: 10px;
+                                        }
+                                        """)  # внешнее оформление (установка стиля)
+
+        self.teInfo3.setHtml(
+            "<font color='black' size='5' style='white-space: pre-wrap'>3.    Проверяем начальное базисное решения на опорность.\n   3.1    Условие неотрицательности не "
             "выполняется. Решение базисное, но не опорное, не принадлежит ОДР.\n<b>   Применяем алгоритм поиска базисного "
             "опорного решения:</b>\n  1) Выбираем в столбце свободных членов B минимальный из отрицательных элементов. "
             "В соответствующей ему строке также выбираем наименьший отрицательный элемент. Этот столбец принимаем за "
@@ -259,7 +366,32 @@ class FormInfo(QtWidgets.QDialog):
             "базиса)\n  4) Процедура итерационная. Проводится до тех пор пока все переменные в решении не станут "
             "неотрицательные. Т.е. мы упорядоченно, целенаправленно «спускаемся» на ОДР.\n\n   3.2    Условие неотрицательности "
             "выполняется. Переходим к следующему пункту.\n    4.    Проверка полученного базисного опорного решения на "
-            "оптимальность. Введем понятие: D – оценка переменной относительно выбранного базиса: D=Z-C\n    5.    Определяем "
+            "оптимальность. Введем понятие: D – оценка переменной относительно выбранного базиса: D=Z-C</font>"
+        )
+        self.formLayout.addWidget(self.teInfo3)  # добавляем виджет в контейнер
+
+        self.pixmap = QtGui.QPixmap("2.png")  # загружаем картинку
+        self.pixmap = self.pixmap.scaledToWidth(900)
+        self.img2 = QLabel(self)  # создаём холст для картинки
+        self.img2.setPixmap(self.pixmap)  # передаём холсту картинку
+        #self.img2.setGeometry(QtCore.QRect(50, 700, 550, 580))  # меняем размер и положение
+        self.formLayout.addWidget(self.img2)  # добавляем виджет в контейнер
+
+        self.teInfo4 = QTextEdit(self)  # создаём текстовую форму
+        self.teInfo4.setReadOnly(True)  # Только чтение.
+        self.teInfo4.setFixedHeight(470)  # фиксируем высоту
+        self.teInfo4.setFixedWidth(895)  # фиксируем ширину
+        self.teInfo4.setFont(QtGui.QFont('Arial'))  # Изменяем шрифт.
+        self.teInfo4.setStyleSheet("""
+                                                QTextEdit {
+                                                    background-color: rgba(230,230,230,0.6);
+                                                    border-radius: 10px;
+                                                    padding: 10px;
+                                                }
+                                                """)  # внешнее оформление (установка стиля)
+
+        self.teInfo4.setHtml(
+            "<font color='black' size='5' style='white-space: pre-wrap'>5.    Определяем "
             "включаемую в базис переменную.. Включаемой в базис переменной соответствует наибольшая по модулю "
             "отрицательная оценка D  (в задаче максимизации). В задаче минимизации должны остаться только отрицательные "
             "оценки, поэтому выбираем наибольшую положительную оценку.\n    6.    Условие допустимости. Определяем исключаемую "
@@ -268,10 +400,45 @@ class FormInfo(QtWidgets.QDialog):
             "вплоть до значения, соответствующего смежной базисной точке. Для этого в разрешающем столбце среди "
             "коэффициентов в ограничениях   выбираем положительные элементы и находим отношения к ним свободных членов "
             "(правых частей ограничений) . Будем обозначать это отношение  Q. Из этих отношений выбираем минимальное. "
-            "Переменная ему соответствующая будет исключаемой из базиса, а строка разрешающей.\n    7.    Переразрешаем задачу "
+            "Переменная ему соответствующая будет исключаемой из базиса, а строка разрешающей.</font>"
+        )
+        self.formLayout.addWidget(self.teInfo4)  # добавляем виджет в контейнер
+
+        self.pixmap = QtGui.QPixmap("3.png")  # загружаем картинку
+        self.pixmap = self.pixmap.scaledToWidth(900)
+        self.img3 = QLabel(self)  # создаём холст для картинки
+        self.img3.setPixmap(self.pixmap)  # передаём холсту картинку
+        # self.img3.setGeometry(QtCore.QRect(50, 700, 550, 580))  # меняем размер и положение
+        self.formLayout.addWidget(self.img3)  # добавляем виджет в контейнер
+
+        self.teInfo5 = QTextEdit(self)  # создаём текстовую форму
+        self.teInfo5.setReadOnly(True)  # Только чтение.
+        self.teInfo5.setFixedHeight(100)  # фиксируем высоту
+        self.teInfo5.setFixedWidth(895)  # фиксируем ширину
+        self.teInfo5.setFont(QtGui.QFont('Arial'))  # Изменяем шрифт.
+        self.teInfo5.setStyleSheet("""
+                                                        QTextEdit {
+                                                            background-color: rgba(230,230,230,0.6);
+                                                            border-radius: 10px;
+                                                            padding: 10px;
+                                                        }
+                                                        """)  # внешнее оформление (установка стиля)
+
+        self.teInfo5.setHtml(
+            "<font color='black' size='5' style='white-space: pre-wrap'>7.    Переразрешаем задачу "
             "относительно измененного базиса – проводим процедуру однократного замещения. Проводим итерационные вычисления "
             "до получения оптимального решения.</font>"
         )
+        self.formLayout.addWidget(self.teInfo5)  # добавляем виджет в контейнер
+
+
+        self.w = QWidget(self)      # создаём общий виджет (нужно для QScrollArea)
+        self.w.setLayout(self.formLayout)   # передаём виджету наш контейнер
+
+        self.scroll = QScrollArea(self)     # создаём возможность скролла
+        self.scroll.setWidget(self.w)   # наделяем наш общий виджет функцией скролла
+        self.scroll.setWidgetResizable(True)    # позволяем расстягивать виджет
+        self.scroll.setGeometry(5, 5, 955, 880)   # положение и размер
 
 
 
@@ -280,25 +447,31 @@ class FormInfo(QtWidgets.QDialog):
 class FormOTVET(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(FormOTVET, self).__init__(parent)
-        self.setGeometry(1100, 80, 600, 900)
+        self.setGeometry(200, 80, 1400, 900)
         self.setWindowTitle('Решение задачи')
         # градиентный фон
         p = QtGui.QPalette()
         gradient = QtGui.QLinearGradient(0, 0, 0, 400)
         gradient.setColorAt(0.0, QtGui.QColor(240, 240, 240))
-        gradient.setColorAt(1.0, QtGui.QColor(200, 200, 200))
+        gradient.setColorAt(1.0, QtGui.QColor(240, 160, 160))
         p.setBrush(QtGui.QPalette.Window, QtGui.QBrush(gradient))
         self.setPalette(p)
 
-        self.textEdit = QTextEdit(self)
-        self.textEdit.setReadOnly(True)  # Только чтение.
-        self.textEdit.setGeometry(QtCore.QRect(10, 10, 580, 880))  # Меняем размер и положение.
-        self.textEdit.setFont(QtGui.QFont('Arial'))  # Изменяем шрифт.
-
+        self.teOTVET = QTextEdit(self)
+        self.teOTVET.setReadOnly(True)  # Только чтение.
+        self.teOTVET.setGeometry(QtCore.QRect(10, 10, 1380, 880))  # Меняем размер и положение.
+        self.teOTVET.setFont(QtGui.QFont('Consolas', 12))  # Изменяем шрифт.
+        self.teOTVET.setStyleSheet("""
+                QTextEdit {
+                    background-color: rgba(230,230,230,0.7);
+                    border-radius: 10px;
+                    padding: 20px;
+                }
+                """)    # внешнее оформление (установка стиля)
 
         # Функция, вызывающая обработчик-сборщик введённых данных
         OTVET = SimplexData(win.kol_str, win.kol_stol, win.gridLayout)
-        self.textEdit.setText(OTVET)    # вставляем решение в окошко для текста
+        self.teOTVET.setText(OTVET)    # вставляем решение в окошко для текста
 
 
 

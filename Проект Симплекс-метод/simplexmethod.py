@@ -409,8 +409,7 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
     for i in range(len(Num_baz)):
         allTab.append([Num_baz[i]] + SimplexOgr[i] + [Q[i]])
     allTab.append([''] + SimplexOgr[-1] + [''])
-    OTVET += (tabulate(tabular_data=allTab, headers=tabHeaders,
-                   tablefmt="fancy_grid"))  # вывод в виде таблицы в нужном формате
+    OTVET += (tabulate(tabular_data=allTab, headers=tabHeaders, tablefmt="fancy_grid"))  # вывод в виде таблицы в нужном формате
     OTVET += ('\n')
 
 
@@ -444,13 +443,13 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
     OTVET += ('\nОТВЕТ...\n\n')
     for i in range(len(SimplexOgr[0])):     # пробегаемся по всем столбцам
         if i == len(SimplexOgr[0])-1:
-            OTVET += ('TotalW = ' + str(SimplexOgr[-1][-1]) + '\n')
+            OTVET += ('\nTotalW = ' + str(SimplexOgr[-1][-1]) + '\n')
         else:
             if str(i+1) in Num_baz:
                 OTVET += ('X' + str(i+1) + ' = ' + str(SimplexOgr[Num_baz.index(str(i+1))][-1]) + '\n')
             else:
                 OTVET += ('X' + str(i+1) + ' = ' + str(0) + '\n')
 
-    #print(OTVET)
+    print(OTVET)
 
     return OTVET
