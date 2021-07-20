@@ -450,6 +450,6 @@ def SimplexMethod(SimplexOgr, SimplexW, max_or_min):
             else:
                 OTVET += ('X' + str(i+1) + ' = ' + str(0) + '\n')
 
-    print(OTVET)
+    #print(OTVET)
 
     return OTVET
