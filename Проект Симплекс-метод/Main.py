@@ -11,7 +11,7 @@ class MyWindow(QMainWindow):
         super(MyWindow, self).__init__()
         self.setGeometry(50, 50, 1030, 350)
         self.setWindowTitle('Симплекс-метод')   # Название окна
-        #self.setWindowIcon(QtGui.QIcon('.ico'))    # Иконка окна
+        self.setWindowIcon(QtGui.QIcon('MainIco.ico'))    # Иконка окна
 
         # градиентный фон
         p = QtGui.QPalette()
@@ -336,7 +336,7 @@ class FormInfo(QtWidgets.QDialog):
 
         self.setGeometry(930, 80, 965, 900)
         self.setWindowTitle('Справка по Симплекс-методу')
-        # self.setWindowIcon(QtGui.QIcon('.ico'))    # Иконка окна
+        self.setWindowIcon(QtGui.QIcon('InfoIco.svg'))    # Иконка окна
         # градиентный фон
         p = QtGui.QPalette()
         gradient = QtGui.QLinearGradient(0, 0, 0, 400)
@@ -531,7 +531,7 @@ class FormOTVET(QtWidgets.QDialog):
         super(FormOTVET, self).__init__(parent)
         self.setGeometry(200, 80, 1400, 900)
         self.setWindowTitle('Решение задачи')
-        # self.setWindowIcon(QtGui.QIcon('.ico'))    # Иконка окна
+        self.setWindowIcon(QtGui.QIcon('MainIco.ico'))    # Иконка окна
         # градиентный фон
         p = QtGui.QPalette()
         gradient = QtGui.QLinearGradient(0, 0, 0, 400)
