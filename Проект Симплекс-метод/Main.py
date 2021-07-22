@@ -336,7 +336,7 @@ class FormInfo(QtWidgets.QDialog):
 
         self.setGeometry(930, 80, 965, 900)
         self.setWindowTitle('Справка по Симплекс-методу')
-        self.setWindowIcon(QtGui.QIcon('InfoIco.svg'))    # Иконка окна
+        self.setWindowIcon(QtGui.QIcon('MainIco.ico'))    # Иконка окна
         # градиентный фон
         p = QtGui.QPalette()
         gradient = QtGui.QLinearGradient(0, 0, 0, 400)
